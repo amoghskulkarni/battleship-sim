@@ -28,6 +28,7 @@ class Simulator():
 
         # Game-specific attributes
         self.__sim_inputs = None
+        self.__sim_input_read_complete = False
 
         # IO files / locations
         _this_dir = Path(__file__).parent.resolve()
@@ -89,12 +90,12 @@ class Simulator():
             elif input == SimInputs.P1_POS_SHIPS:
                 __P1_POS_SHIPS_raw = _inputs[input.value]
                 logging.debug("P1_POS_SHIPS (raw) = {}".format(__P1_POS_SHIPS_raw))
-                inputs_dict['P1_SHIP_POS'] = self.__list_input_sanity_check(__P1_POS_SHIPS_raw, 'Player 1 ship positions', 
+                inputs_dict['P1_POS_SHIPS'] = self.__list_input_sanity_check(__P1_POS_SHIPS_raw, 'Player 1 ship positions', 
                                                                                 3, ',', ':', inputs_dict['S'], -1, inputs_dict['M'])
             elif input == SimInputs.P2_POS_SHIPS:
                 __P2_POS_SHIPS_raw = _inputs[input.value]
                 logging.debug("P2_POS_SHIPS (raw) = {}".format(__P2_POS_SHIPS_raw))
-                inputs_dict['P2_SHIP_POS'] = self.__list_input_sanity_check(__P2_POS_SHIPS_raw, 'Player 2 ship positions', 
+                inputs_dict['P2_POS_SHIPS'] = self.__list_input_sanity_check(__P2_POS_SHIPS_raw, 'Player 2 ship positions', 
                                                                                 4, ',', ':', inputs_dict['S'], -1, inputs_dict['M'])
             elif input == SimInputs.N_MISSILES:
                 __T_raw = _inputs[input.value]
@@ -115,15 +116,18 @@ class Simulator():
         return inputs_dict
     
     def simulate(self) -> None:
+        if not self.__sim_input_read_complete:
+            raise RuntimeError('Simulation input file needs to be read before simulation.')
+        
         pass
 
-    def game_setup(self) -> None:
+    def __game_setup(self) -> None:
         self.__game.set_n_ships(self.__sim_inputs['S'])
         self.__game.setup_boards(n_ships=self.__sim_inputs['S'], 
                                     p1_ships=self.__sim_inputs['P1_POS_SHIPS'],
                                     p2_ships=self.__sim_inputs['P2_POS_SHIPS'])
 
-    def player_setup(self) -> None:
+    def __player_setup(self) -> None:
         self.__player_1.set_moves_list(self.__sim_inputs['P1_MOVES'])
         self.__player_2.set_moves_list(self.__sim_inputs['P2_MOVES'])
 
@@ -136,14 +140,18 @@ class Simulator():
             
             # Sanity check and store sim inputs 
             self.__sim_inputs = self.__input_sanity_check(_contents)
+        
+        self.__game_setup()
+        self.__player_setup()
 
-            logging.debug("Inputs read from the file: {path}".format(_input_file_abs_path))
+        logging.debug("Inputs read from the file: {path}".format(path=_input_file_abs_path))
+        self.__sim_input_read_complete = True
 
     def write_result(self, filename: str) -> None:
         self.output_file_name = str(int(datetime.now().timestamp())) + filename
         _output_file_abs_path = self.output_file_dir / self.output_file_name
 
-        # Construct the result string
+        # TODO: Construct the result string
 
         with open(_output_file_abs_path, 'w') as f:
             pass
