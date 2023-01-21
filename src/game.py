@@ -21,29 +21,31 @@ class Game():
             self.__n_ships = n_ships
         
         # Initialize the player boards
-        self.__p1_board = [['-'] * self.__n_ships] * self.__n_ships
+        self.__p1_board = [['-'] * self.__n_ships for _ in range(self.__n_ships)]
         for (ship_loc_x, ship_loc_y) in p1_ships:
             self.__p1_board[ship_loc_x][ship_loc_y] = 'B'
-        self.__p2_board = [['-'] * self.__n_ships] * self.__n_ships
+        self.__p2_board = [['-'] * self.__n_ships for _ in range(self.__n_ships)]
         for (ship_loc_x, ship_loc_y) in p2_ships:
             self.__p2_board[ship_loc_x][ship_loc_y] = 'B' 
     
     def register_player_move(self, player_id:int, hit_loc:Tuple[int, int]) -> None:
         (hit_loc_x, hit_loc_y) = hit_loc
         if player_id == 1:
-            logging.debug("Player 1 hit a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
             if self.__p2_board[hit_loc_x][hit_loc_y] == 'B':
                 self.__p2_board[hit_loc_x][hit_loc_y] = 'X'
+                logging.debug("Player 1 hit a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
                 self.__p2_ships_destroyed += 1
             elif self.__p2_board[hit_loc_x][hit_loc_y] == '-':
                 self.__p2_board[hit_loc_x][hit_loc_y] = 'O'
+                logging.debug("Player 1 missed a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
         elif player_id == 2:
-            logging.debug("Player 2 hit a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
             if self.__p1_board[hit_loc_x][hit_loc_y] == 'B':
                 self.__p1_board[hit_loc_x][hit_loc_y] = 'X'
+                logging.debug("Player 2 hit a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
                 self.__p1_ships_destroyed += 1
             elif self.__p1_board[hit_loc_x][hit_loc_y] == '-':
                 self.__p1_board[hit_loc_x][hit_loc_y] = 'O'
+                logging.debug("Player 2 missed a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
         else:
             raise ValueError("Player ID needs to be either 1 or 2.")
 
@@ -59,6 +61,8 @@ class Game():
         return score
 
     def get_game_result(self) -> str:
+        logging.debug("Player 1 score: {score}".format(score=self.__p2_ships_destroyed))
+        logging.debug("Player 2 score: {score}".format(score=self.__p1_ships_destroyed))
         if self.__p1_ships_destroyed == self.__p2_ships_destroyed:
             return "It is a draw"
         elif self.__p1_ships_destroyed > self.__p2_ships_destroyed:
