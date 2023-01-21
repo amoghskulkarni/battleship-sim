@@ -24,9 +24,7 @@ args = parser.parse_args()
 logging.basicConfig(level=args.loglevel)
 
 if __name__ == "__main__":
-
-    p1 = Player()
-    p2 = Player()
-    g = Game()
-    s = Simulator(p1=p1, p2=p2, g=g)
+    s = Simulator(p1=Player(), p2=Player(), g=Game())
     s.read_input('sample-data-1.txt')
+    print(s.get_result())
+    

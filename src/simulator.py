@@ -54,7 +54,8 @@ class Simulator():
                                 .format(name=_input_name, bound=_upper, line_n=_line_n))
         return __input
     
-    def __list_input_sanity_check(self, _raw_input, _input_name, _line_n, _listsep, _item_sep, _list_len, _list_item_lower, _list_item_upper):
+    def __list_input_sanity_check(self, _raw_input, _input_name, _line_n, _listsep, _item_sep, 
+                                    _list_len, _list_item_lower, _list_item_upper):
         __input_list = []
         try:
             __input_list_split = _raw_input.split(_listsep)
@@ -76,7 +77,7 @@ class Simulator():
                                 .format(name=_input_name, line=_line_n, lower=_list_item_lower+1, upper=_list_item_upper-1))
         return __input_list
 
-    def __input_sanity_check(self, _inputs: List) -> None:
+    def __input_sanity_check(self, _inputs) -> None:
         inputs_dict = {}
         for input in SimInputs:
             if input == SimInputs.BATTLEGROUND_SIZE:
@@ -115,12 +116,6 @@ class Simulator():
         logging.debug("Sanitized inputs: {}".format(str(inputs_dict)))
         return inputs_dict
     
-    def simulate(self) -> None:
-        if not self.__sim_input_read_complete:
-            raise RuntimeError('Simulation input file needs to be read before simulation.')
-        
-        pass
-
     def __game_setup(self) -> None:
         self.__game.set_n_ships(self.__sim_inputs['S'])
         self.__game.setup_boards(n_ships=self.__sim_inputs['S'], 
@@ -131,6 +126,23 @@ class Simulator():
         self.__player_1.set_moves_list(self.__sim_inputs['P1_MOVES'])
         self.__player_2.set_moves_list(self.__sim_inputs['P2_MOVES'])
 
+    def simulate(self) -> None:
+        if not self.__sim_input_read_complete:
+            raise RuntimeError('Simulation input file needs to be read before simulation.')
+        
+        for _ in range(self.__sim_inputs['T']):
+            p1_move = self.__player_1.next_move()
+            logging.debug("Player 1 moves: ({x},{y})".format(x=p1_move[0],y=p1_move[1]))
+            self.__game.register_player_move(player_id=1, hit_loc=p1_move)
+
+            p2_move = self.__player_2.next_move()
+            logging.debug("Player 2 moves: ({x},{y})".format(x=p2_move[0],y=p2_move[1]))
+            self.__game.register_player_move(player_id=2, hit_loc=p2_move)
+
+    def get_result(self) -> str:
+        self.simulate()
+        return self.__game.get_game_result()
+    
     def read_input(self, filename: str) -> None:
         self.input_file_name = filename
         _input_file_abs_path = self.input_file_dir / self.input_file_name
