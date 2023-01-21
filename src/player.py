@@ -8,8 +8,8 @@ class Player():
     def __init__(self) -> None:
         self.__moves_list = None
     
-    def set_moves_list(self, moves:List[Tuple(int, int)]) -> None:
+    def set_moves_list(self, moves:List[Tuple[int, int]]) -> None:
         self.__moves_list = iter(moves)
 
-    def next_move(self) -> List[Tuple(int, int)]:
+    def next_move(self) -> List[Tuple[int, int]]:
         next(self.__moves_list)

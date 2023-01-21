@@ -16,7 +16,7 @@ class Game():
     def set_n_ships(self, n_ships:int) -> None:
         self.__n_ships = n_ships
 
-    def setup_boards(self, n_ships:int, p1_ships:List[Tuple(int, int)], p2_ships:List[Tuple(int, int)]) -> None:
+    def setup_boards(self, n_ships:int, p1_ships:List[Tuple[int, int]], p2_ships:List[Tuple[int, int]]) -> None:
         if not self.__n_ships:
             self.__n_ships = n_ships
         
@@ -28,7 +28,7 @@ class Game():
         for (ship_loc_x, ship_loc_y) in p2_ships:
             self.__p2_board[ship_loc_x][ship_loc_y] = 'B' 
     
-    def register_player_move(self, player_id:int, hit_loc:Tuple(int, int)) -> None:
+    def register_player_move(self, player_id:int, hit_loc:Tuple[int, int]) -> None:
         (hit_loc_x, hit_loc_y) = hit_loc
         if player_id == 1:
             logging.debug("Player 1 hit a missile at ({x},{y})".format(x=hit_loc_x, y=hit_loc_y))
