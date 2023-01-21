@@ -2,11 +2,14 @@
 """
 
 
-from typing import List
+from typing import List, Tuple
 
 class Player():
     def __init__(self) -> None:
-        pass
+        self.__moves_list = None
+    
+    def set_moves_list(self, moves:List[Tuple(int, int)]) -> None:
+        self.__moves_list = iter(moves)
 
-    def next_move() -> List[int]:
-        pass
+    def next_move(self) -> List[Tuple(int, int)]:
+        next(self.__moves_list)
