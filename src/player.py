@@ -11,5 +11,5 @@ class Player():
     def set_moves_list(self, moves:List[Tuple[int, int]]) -> None:
         self.__moves_list = iter(moves)
 
-    def next_move(self) -> List[Tuple[int, int]]:
-        next(self.__moves_list)
+    def next_move(self) -> Tuple[int, int]:
+        return next(self.__moves_list)
