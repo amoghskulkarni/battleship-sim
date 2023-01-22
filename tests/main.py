@@ -2,6 +2,7 @@ import unittest
 
 from .invalid_input import InvalidInputUnitTests
 from .player_methods import PlayerMethodsUnitTests
+from .game_methods import GameMethodsUnitTests
 
 def suite():
     suite = unittest.TestSuite()
@@ -13,12 +14,17 @@ def suite():
     suite.addTest(InvalidInputUnitTests('test_ship_number_nonnumeric'))
     suite.addTest(InvalidInputUnitTests('test_ship_locations_range_violation'))
     suite.addTest(InvalidInputUnitTests('test_ship_locations_nonnumeric'))
-    suite.addTest(InvalidInputUnitTests('test_ship_locations_too_many'))
+    suite.addTest(InvalidInputUnitTests('test_ship_locations_number_violation'))
     suite.addTest(InvalidInputUnitTests('test_ship_locations_invalid_format'))
 
     # Player class unit tests
     suite.addTest(PlayerMethodsUnitTests('test_moves_setter'))
     suite.addTest(PlayerMethodsUnitTests('test_overdraft_moves'))
+    
+    # Game class unit tests
+    suite.addTest(GameMethodsUnitTests('test_board_setter'))
+    suite.addTest(GameMethodsUnitTests('test_register_move_hit'))
+    suite.addTest(GameMethodsUnitTests('test_register_move_miss'))
     return suite
 
 if __name__ == '__main__':

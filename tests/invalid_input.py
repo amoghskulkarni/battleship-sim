@@ -33,7 +33,7 @@ class InvalidInputUnitTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.s.read_input('unittest--invalid_input6.txt')
     
-    def test_ship_locations_too_many(self):
+    def test_ship_locations_number_violation(self):
         with self.assertRaises(ValueError):
             self.s.read_input('unittest--invalid_input7.txt')
     
