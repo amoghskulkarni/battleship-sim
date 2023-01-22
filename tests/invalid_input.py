@@ -16,3 +16,11 @@ class InvalidInputUnitTests(unittest.TestCase):
     def test_battleground_size_nonnumeric(self):
         with self.assertRaises(ValueError):
             self.s.read_input('unittest--invalid_input2.txt')
+    
+    def test_ship_number_range_violation(self):
+        with self.assertRaises(ValueError):
+            self.s.read_input('unittest--invalid_input3.txt')
+    
+    def test_ship_number_nonnumeric(self):
+        with self.assertRaises(ValueError):
+            self.s.read_input('unittest--invalid_input4.txt')
