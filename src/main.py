@@ -20,11 +20,17 @@ parser.add_argument(
     help="Be verbose",
     action="store_const", dest="loglevel", const=logging.INFO,
 )
+parser.add_argument(
+    '-i', '--input',
+    help="Simulation input file name",
+    dest="filename",
+    default="sample-data-1.txt",
+)
 args = parser.parse_args()
 logging.basicConfig(level=args.loglevel)
 
 if __name__ == "__main__":
     s = Simulator(p1=Player(), p2=Player(), g=Game())
-    s.read_input('sample-data-1.txt')
+    s.read_input(args.filename)
     s.simulate()
     s.write_result()
