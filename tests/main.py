@@ -11,6 +11,7 @@ def suite():
     suite.addTest(InvalidInputUnitTests('test_ship_locations_range_violation'))
     suite.addTest(InvalidInputUnitTests('test_ship_locations_nonnumeric'))
     suite.addTest(InvalidInputUnitTests('test_ship_locations_too_many'))
+    suite.addTest(InvalidInputUnitTests('test_ship_locations_invalid_format'))
     return suite
 
 if __name__ == '__main__':

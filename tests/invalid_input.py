@@ -36,3 +36,8 @@ class InvalidInputUnitTests(unittest.TestCase):
     def test_ship_locations_too_many(self):
         with self.assertRaises(ValueError):
             self.s.read_input('unittest--invalid_input7.txt')
+    
+    def test_ship_locations_invalid_format(self):
+        with self.assertRaises(ValueError):
+            self.s.read_input('unittest--invalid_input8.txt')
+    
