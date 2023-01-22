@@ -1,8 +1,8 @@
 """This file contains the simulator class for a 2-player game of Battleship.
 """
 
-from player import Player
-from game import Game
+from .player import Player
+from .game import Game
 
 import logging
 from pathlib import Path

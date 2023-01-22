@@ -1,9 +1,9 @@
 """Main executable for Battleship simulator.
 """
 
-from simulator import Simulator
-from player import Player
-from game import Game
+from .simulator import Simulator
+from .player import Player
+from .game import Game
 
 import argparse
 import logging
