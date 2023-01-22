@@ -12,4 +12,7 @@ class InvalidInputUnitTests(unittest.TestCase):
     def test_battleground_size_range_violation(self):
         with self.assertRaises(ValueError):
             self.s.read_input('unittest--invalid_input1.txt')
-
+    
+    def test_battleground_size_nonnumeric(self):
+        with self.assertRaises(ValueError):
+            self.s.read_input('unittest--invalid_input2.txt')
