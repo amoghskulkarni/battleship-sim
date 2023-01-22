@@ -26,5 +26,5 @@ logging.basicConfig(level=args.loglevel)
 if __name__ == "__main__":
     s = Simulator(p1=Player(), p2=Player(), g=Game())
     s.read_input('sample-data-1.txt')
-    print(s.get_result())
-    
+    s.simulate()
+    s.write_result()

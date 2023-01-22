@@ -7,7 +7,6 @@ from game import Game
 import logging
 from pathlib import Path
 from datetime import datetime
-from typing import List
 from enum import Enum
 
 class SimInputs(Enum):
@@ -35,7 +34,6 @@ class Simulator():
         self.input_file_dir = _this_dir / '..' / 'data'
         self.output_file_dir = _this_dir / '..' / 'out'
         self.input_file_name = ""
-        self.output_file_name = ""
     
     def __numeric_input_sanity_check(self, _raw_input, _input_name, _line_n, _lower, _upper) -> int:
         try:
@@ -159,11 +157,33 @@ class Simulator():
         logging.debug("Inputs read from the file: {path}".format(path=_input_file_abs_path))
         self.__sim_input_read_complete = True
 
-    def write_result(self, filename: str) -> None:
-        self.output_file_name = str(int(datetime.now().timestamp())) + filename
+    def write_result(self) -> None:
+        self.output_file_name = 'Result__' \
+            + str(int(datetime.now().timestamp())) \
+            + '__' \
+            + self.input_file_name.split('.')[0] + '.txt'
         _output_file_abs_path = self.output_file_dir / self.output_file_name
 
-        # TODO: Construct the result string
+        # Construct the result string
+        result = ''
+
+        result += 'Player1\n'
+        for board_line in self.__game.get_player_board(player_id=1):
+            for line_item in board_line:
+                result += line_item + ' '
+            result += '\n'
+        result += '\n\n\n'
+        result += 'Player2\n'
+        for board_line in self.__game.get_player_board(player_id=2):
+            for line_item in board_line:
+                result += line_item + ' '
+            result += '\n'
+        result += '\n'
+        result += 'P1:' + str(self.__game.get_player_scores(player_id=1)) + '\n'
+        result += 'P2:' + str(self.__game.get_player_scores(player_id=2)) + '\n'
+        result += self.__game.get_game_result()
 
         with open(_output_file_abs_path, 'w') as f:
-            pass
+            f.write(result)
+        
+        logging.debug("Simulation result written in the file: {path}".format(path=_output_file_abs_path))
