@@ -5,11 +5,15 @@ from .player import Player
 from .game import Game
 
 import logging
+from typing import List, Tuple
 from pathlib import Path
 from datetime import datetime
 from enum import Enum
 
 class SimInputs(Enum):
+    """Enum class representing different inputs present in the input file 
+    (values correspond to their line numbers)
+    """
     BATTLEGROUND_SIZE = 0
     N_SHIPS = 1
     P1_POS_SHIPS = 2
@@ -20,6 +24,13 @@ class SimInputs(Enum):
 
 class Simulator():
     def __init__(self, p1:Player, p2:Player, g:Game) -> None:
+        """Simulator class to perform the simulation using the provided input file
+
+        Args:
+            p1 (Player): Player object corresponding to Player 1
+            p2 (Player): Player object corresponding to Player 2
+            g (Game): Game object corresponding to the game (player boards and game related actions)
+        """
         # Game-specific objects
         self.__player_1 = p1
         self.__player_2 = p2
@@ -29,13 +40,30 @@ class Simulator():
         self.__sim_inputs = None
         self.__sim_input_read_complete = False
 
-        # IO files / locations
+        # IO files / directories 
         _this_dir = Path(__file__).parent.resolve()
-        self.input_file_dir = _this_dir / '..' / 'data'
-        self.output_file_dir = _this_dir / '..' / 'out'
-        self.input_file_name = ""
+        self.__input_file_dir = _this_dir / '..' / 'data'
+        self.__output_file_dir = _this_dir / '..' / 'out'
+        self.__input_file_name = ""
     
-    def __numeric_input_sanity_check(self, _raw_input, _input_name, _line_n, _lower, _upper) -> int:
+    def __numeric_input_sanity_check(self, _raw_input:str, _input_name:str, _line_n:int, _lower:int, _upper:int) -> int:
+        """Performs sanity check on the numeric inputs in the input text file to the simulator
+
+        Args:
+            _raw_input (str): Raw value of the input (from the file)
+            _input_name (str): Input name for the debug messages
+            _line_n (int): Line no. of the input in the file
+            _lower (int): Lower bound of the numeric input
+            _upper (int): Upper bound of the numeric input
+
+        Raises:
+            ValueError: If the input is present in the file in an invalid format
+            ValueError: If the input value is lesser than the lower bound
+            ValueError: If the input value is greater than the upper bound
+
+        Returns:
+            int: Integer value of the input after performing sanity checks
+        """
         try:
             __input = int(_raw_input)
         except ValueError:
@@ -52,8 +80,28 @@ class Simulator():
                                 .format(name=_input_name, bound=_upper, line_n=_line_n))
         return __input
     
-    def __list_input_sanity_check(self, _raw_input, _input_name, _line_n, _listsep, _item_sep, 
-                                    _list_len, _list_item_lower, _list_item_upper):
+    def __list_input_sanity_check(self, _raw_input:str, _input_name:str, _line_n:int, _listsep:str, _item_sep:str, 
+                                    _list_len:int, _list_item_lower:int, _list_item_upper:int) -> List[Tuple[int, int]]:
+        """Performs sanity checks on the list type inputs from the input text file to the simulator
+
+        Args:
+            _raw_input (str): Raw value of the input present in the file
+            _input_name (str): Name of the input for debugging messages
+            _line_n (int): Line no. of the input in the file
+            _listsep (str): Separator character using which the list items are separated
+            _item_sep (str): Separator character using which the item components are separated (coordinate values, in this case)
+            _list_len (int): Length of the list (no. of list items that should be present)
+            _list_item_lower (int): Lower bound for the coordinate values
+            _list_item_upper (int): Upper bound for the coordinate values
+
+        Raises:
+            ValueError: If one or more list items are in invalid format
+            ValueError: If the number of list items does not match to the _list_len parameter
+            ValueError: If one or more list items fall outside the range given be _list_item_lower and _list_item_upper
+
+        Returns:
+            List[Tuple[int, int]]: List of tuples, where the sanitized coordinates are integer tuples
+        """
         __input_list = []
         try:
             __input_list_split = _raw_input.split(_listsep)
@@ -75,9 +123,18 @@ class Simulator():
                                 .format(name=_input_name, line=_line_n, lower=_list_item_lower+1, upper=_list_item_upper-1))
         return __input_list
 
-    def __input_sanity_check(self, _inputs) -> None:
+    def __input_sanity_check(self, _inputs:str) -> None:
+        """Calls sanity check on individual input items present in the input text file to the simulator
+
+        Args:
+            _inputs (str): Raw contents of the input text file
+
+        Returns:
+            None
+        """
         inputs_dict = {}
         for input in SimInputs:
+            # Call sanity checks on inputs depending on what they are (either numeric type or list type)
             if input == SimInputs.BATTLEGROUND_SIZE:
                 __M_raw = _inputs[input.value]
                 logging.debug("M (raw) = {}".format(__M_raw))
@@ -115,16 +172,25 @@ class Simulator():
         return inputs_dict
     
     def __game_setup(self) -> None:
+        """Sets up the internal members of the Game object
+        """
         self.__game.set_n_ships(self.__sim_inputs['S'])
         self.__game.setup_boards(n_ships=self.__sim_inputs['S'], 
                                     p1_ships=self.__sim_inputs['P1_POS_SHIPS'],
                                     p2_ships=self.__sim_inputs['P2_POS_SHIPS'])
 
     def __player_setup(self) -> None:
+        """Sets up the internal members of the Player objects
+        """
         self.__player_1.set_moves_list(self.__sim_inputs['P1_MOVES'])
         self.__player_2.set_moves_list(self.__sim_inputs['P2_MOVES'])
 
     def simulate(self) -> None:
+        """Simulates the game of Battleship using the inputs provided in the inputs text file
+
+        Raises:
+            RuntimeError: If the method is called before the simulation inputs are read from an input file
+        """
         if not self.__sim_input_read_complete:
             raise RuntimeError('Simulation input file needs to be read before simulation.')
         
@@ -138,12 +204,22 @@ class Simulator():
             self.__game.register_player_move(player_id=2, hit_loc=p2_move)
 
     def get_result(self) -> str:
+        """Returns result of the game
+
+        Returns:
+            str: Either "It is a draw" or "Player 1 wins" or "Player 2 wins"
+        """
         self.simulate()
         return self.__game.get_game_result()
     
     def read_input(self, filename: str) -> None:
-        self.input_file_name = filename
-        _input_file_abs_path = self.input_file_dir / self.input_file_name
+        """Reads input from the input text file, performs sanity checks and stores them in the usable format
+
+        Args:
+            filename (str): File name of the input file (must be present in ../data directory)
+        """
+        self.__input_file_name = filename
+        _input_file_abs_path = self.__input_file_dir / self.__input_file_name
         
         with open(_input_file_abs_path, 'r') as f:
             _contents = f.read().split('\n')
@@ -151,6 +227,7 @@ class Simulator():
             # Sanity check and store sim inputs 
             self.__sim_inputs = self.__input_sanity_check(_contents)
         
+        # Set up the internal game and player objects 
         self.__game_setup()
         self.__player_setup()
 
@@ -158,11 +235,13 @@ class Simulator():
         self.__sim_input_read_complete = True
 
     def write_result(self) -> None:
+        """Writes result in the output file.
+        """
         self.output_file_name = 'Result__' \
             + str(int(datetime.now().timestamp())) \
             + '__' \
-            + self.input_file_name.split('.')[0] + '.txt'
-        _output_file_abs_path = self.output_file_dir / self.output_file_name
+            + self.__input_file_name.split('.')[0] + '.txt'
+        _output_file_abs_path = self.__output_file_dir / self.output_file_name
 
         # Construct the result string
         result = ''
