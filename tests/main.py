@@ -25,6 +25,8 @@ def suite():
     suite.addTest(GameMethodsUnitTests('test_board_setter'))
     suite.addTest(GameMethodsUnitTests('test_register_move_hit'))
     suite.addTest(GameMethodsUnitTests('test_register_move_miss'))
+    suite.addTest(GameMethodsUnitTests('test_player_scores'))
+    suite.addTest(GameMethodsUnitTests('test_game_result'))
     return suite
 
 if __name__ == '__main__':

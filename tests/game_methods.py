@@ -36,3 +36,20 @@ class GameMethodsUnitTests(unittest.TestCase):
         self.g.register_player_move(player_id=1, hit_loc=(4, 0))
         self.assertEquals(board[0][3], 'B')
         self.assertEquals(board[4][0], 'O')
+    
+    def test_player_scores(self):
+        self.g.register_player_move(player_id=1, hit_loc=(0, 3))
+        self.g.register_player_move(player_id=2, hit_loc=(0, 0))
+        self.g.register_player_move(player_id=1, hit_loc=(3, 1))
+        self.g.register_player_move(player_id=2, hit_loc=(2, 4))
+
+        self.assertEquals(self.g.get_player_scores(player_id=1), 2)
+        self.assertEquals(self.g.get_player_scores(player_id=2), 1)
+    
+    def test_game_result(self):
+        self.g.register_player_move(player_id=1, hit_loc=(3, 1))
+        self.g.register_player_move(player_id=2, hit_loc=(2, 3))
+        self.g.register_player_move(player_id=1, hit_loc=(4, 4))
+        self.g.register_player_move(player_id=2, hit_loc=(1, 2))
+
+        self.assertEquals(self.g.get_game_result(), "Player 2 wins")
