@@ -3,6 +3,7 @@ import unittest
 from .invalid_input import InvalidInputUnitTests
 from .player_methods import PlayerMethodsUnitTests
 from .game_methods import GameMethodsUnitTests
+from .simulator_methods import SimulatorMethodsUnitTests
 
 def suite():
     suite = unittest.TestSuite()
@@ -27,6 +28,11 @@ def suite():
     suite.addTest(GameMethodsUnitTests('test_register_move_miss'))
     suite.addTest(GameMethodsUnitTests('test_player_scores'))
     suite.addTest(GameMethodsUnitTests('test_game_result'))
+
+    # Simulator class unit test
+    suite.addTest(SimulatorMethodsUnitTests('test_simulating_before_reading_input'))
+    suite.addTest(SimulatorMethodsUnitTests('test_simulate_without_error'))
+    suite.addTest(SimulatorMethodsUnitTests('test_simulate_and_write_output'))
     return suite
 
 if __name__ == '__main__':
